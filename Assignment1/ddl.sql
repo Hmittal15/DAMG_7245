@@ -1,0 +1,1 @@
+CREATE TABLE IF NOT EXISTS loaction_radar (state_name text, city text, identifier text, coordinates text, latitude real, longitude real);

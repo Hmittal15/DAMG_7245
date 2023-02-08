@@ -4,8 +4,21 @@ import logging
 from dotenv import load_dotenv
 import sqlite3
 import io
+import pandas as pd
 
 load_dotenv()
+
+# Generating URL from filename
+def getURL(filename):
+    x=filename.split("_")
+    goes=x[2][1:]
+    prod=x[1].split("-")
+    if prod[2][-1].isdigit():
+        prod[2]=prod[2][:-1]
+    year=x[3][1:5]
+    day=x[3][5:8]
+    hour=x[3][8:10]
+    print("https://noaa-goes"+goes+".s3.amazonaws.com/"+prod[0]+"-"+prod[1]+"-"+prod[2]+"/"+year+"/"+day+"/"+hour+"/"+filename)
 
 # Define logging format
 LOGLEVEL = os.environ.get ('LOGLEVEL', 'INFO') .upper()
@@ -65,6 +78,60 @@ def create_metadata_noaa():
     conn.commit()
     conn.close()
 
+def read_metadata_noaa():
+    """Read the metadata from sqlite db"""
+    prod=set()
+    year=set()
+    day=set()
+    hour=set()
+    db = sqlite3.connect("filenames_goes.db")
+    cursor = db.cursor()
+    meta_data=cursor.execute('''SELECT Product , Year , Day , Hour FROM filenames_goes''')
+    for record in meta_data:
+        prod.add(record[0])
+        year.add(record[1])
+        day.add(record[2])
+        hour.add(record[3])
+    return prod, year, day, hour
+
+def validate_file(filename):
+    """Validate if user provided a valid file name to get URL"""
+    prod, year, day, hour= read_metadata_noaa()
+    count=0
+    message=""
+    x=filename.split("_")
+    goes=x[2]
+    my_prod=x[1].split("-")
+    prod_name=my_prod[0]+"-"+my_prod[1]+"-"+my_prod[2]
+    start=x[3]
+    end=x[4]
+    create=x[5].split(".")
+    
+    if (x[0]!='OR'):
+        count+=1
+        message+="Please provide valid prefix for Operational system real-time data\n"
+    if (prod_name not in prod):
+        count+=1
+        message+="Please provide valid product name\n"
+    if ((goes!='G16') and (goes!='G18')):
+        count+=1
+        message+="Please provide valid satellite ID\n"
+    if ((start[0]!='s') or (len(start)!=15) or (start[1:5] not in year) or (start[5:8] not in day) or (start[8:10] not in hour)):
+        count+=1
+        message+="Please provide valid start date\n"
+    if ((end[0]!='e') or (len(end)!=15)):
+        count+=1
+        message+="Please provide valid end date\n"
+    if ((create[0][0]!='c') or (len(create[0])!=15)):
+        count+=1
+        message+="Please provide valid create date\n"
+    if (x[-1][-3:]!='.nc'):
+        count+=1
+        message+="Please provide valid file extension\n"
+    if (count==0):
+        message="Valid file"
+    print (message)
+
 def list_files_in_user_bucket() :
     """Lists all the files present in the user's S3 bucket along with its file path"""
     logging.debug("fetching objects in user s3 bucket")
@@ -89,8 +156,9 @@ def list_files_in_noaa_bucket():
 
 def main():
     # return
-    list_files_in_user_bucket()
-    # list_files_in_noaa_bucket()
+    # list_files_in_user_bucket()
+    list_files_in_noaa_bucket()
+    getURL("OR_ABI-L1b-RadM1-M6C01_G18_s20230030201252_e20230030201311_c20230030201340.nc")
     # create_metadata_noaa()
     # write_db_to_bucket()
 

@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 import sqlite3
 import io
 import pandas as pd
+import re
 
 load_dotenv()
 
@@ -96,6 +97,7 @@ def read_metadata_noaa():
 
 def validate_file(filename):
     """Validate if user provided a valid file name to get URL"""
+    regex = re.compile('[@!#$%^&*()<>?/\|}{~:]')
     prod, year, day, hour= read_metadata_noaa()
     count=0
     message=""
@@ -107,6 +109,9 @@ def validate_file(filename):
     end=x[4]
     create=x[5].split(".")
     
+    if(regex.search(filename) != None):
+        count+=1
+        message="Please avoid special character in filename\n"
     if (x[0]!='OR'):
         count+=1
         message+="Please provide valid prefix for Operational system real-time data\n"

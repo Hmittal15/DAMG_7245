@@ -6,8 +6,23 @@ import sqlite3
 import io
 import pandas as pd
 import re
+import requests
+import time
 
 load_dotenv()
+
+#Generating logs with given message in cloudwatch
+def write_logs(message : str):
+    clientlogs.put_log_events(
+    logGroupName = "assignment1-logs",
+    logStreamName = "goes-logs",
+    logEvents = [
+        {
+            'timestamp' : int(time.time() * 1e3),
+            'message' : message
+        }
+    ]                            
+    )
 
 # Generating URL from filename
 def getURL(filename):
@@ -20,6 +35,19 @@ def getURL(filename):
     day=x[3][5:8]
     hour=x[3][8:10]
     print("https://noaa-goes"+goes+".s3.amazonaws.com/"+prod[0]+"-"+prod[1]+"-"+prod[2]+"/"+year+"/"+day+"/"+hour+"/"+filename)
+    link="https://noaa-goes"+goes+".s3.amazonaws.com/"+prod[0]+"-"+prod[1]+"-"+prod[2]+"/"+year+"/"+day+"/"+hour+"/"+filename
+    return link
+
+
+#
+def download_file(filename):
+    url = getURL(filename)
+    print(url)
+    r = requests.get(url, allow_redirects=True)
+    file_path = os.path.join(os.path.dirname(__file__),filename)
+    with open(file_path,'wb') as f:
+        f.write(r.content)
+    write_logs(f"{[filename,url]}")
 
 # Define logging format
 LOGLEVEL = os.environ.get ('LOGLEVEL', 'INFO') .upper()
@@ -30,6 +58,13 @@ logging.basicConfig(
 
 # Establish connection to user bucket
 s3client = boto3.client('s3', 
+                        region_name = 'us-east-1',
+                        aws_access_key_id = os.environ.get('AWS_ACCESS_KEY'),
+                        aws_secret_access_key = os.environ.get('AWS_SECRET_KEY')
+                        )
+
+#Establish connection to logs
+clientlogs = boto3.client('logs', 
                         region_name = 'us-east-1',
                         aws_access_key_id = os.environ.get('AWS_ACCESS_KEY'),
                         aws_secret_access_key = os.environ.get('AWS_SECRET_KEY')
@@ -161,9 +196,10 @@ def list_files_in_noaa_bucket():
 
 def main():
     # return
-    # list_files_in_user_bucket()
+    list_files_in_user_bucket()
     list_files_in_noaa_bucket()
     getURL("OR_ABI-L1b-RadM1-M6C01_G18_s20230030201252_e20230030201311_c20230030201340.nc")
+    download_file("OR_ABI-L1b-RadM1-M6C01_G18_s20230030201252_e20230030201311_c20230030201340.nc")
     # create_metadata_noaa()
     # write_db_to_bucket()
 

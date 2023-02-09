@@ -168,17 +168,20 @@ st.header("")
 
 
 if st.button('Generate using Name'):  
+    if (filename == ""): 
+        st.write("Please enter file name")
 
-    selected_object_key = path_from_filename(filename)
+    else: 
+        selected_object_key = path_from_filename(filename)
 
-    file_exists = check_if_file_exists_in_s3_bucket(nexrad_bucket, selected_object_key)
+        file_exists = check_if_file_exists_in_s3_bucket(nexrad_bucket, selected_object_key)
 
-    try:
-        if file_exists:
-            copy_to_public_bucket(nexrad_bucket, selected_object_key, user_bucket_name, user_object_key)
-            download_link = generate_download_link(user_bucket_name, user_object_key)
-            st.write('Download Link : ', download_link.split("?")[0])
-        else:
-            raise Exception("File Not Found")
-    except Exception as e:
-        st.write("File Not Found")
+        try:
+            if file_exists:
+                copy_to_public_bucket(nexrad_bucket, selected_object_key, user_bucket_name, user_object_key)
+                download_link = generate_download_link(user_bucket_name, user_object_key)
+                st.write('Download Link : ', download_link.split("?")[0])
+            else:
+                raise Exception("File Not Found")
+        except Exception as e:
+            st.write("File Not Found")

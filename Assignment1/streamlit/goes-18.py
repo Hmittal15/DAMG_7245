@@ -148,20 +148,23 @@ filename = st.text_input('Enter Filename')
 st.header("")
 
 
-if st.button('Generate using Name'):    
+if st.button('Generate using Name'): 
+    if (filename == ""): 
+        st.write("Please enter file name")
 
-    if ('s' in filename):
-        selected_object_key = path_from_filename(filename)
-        file_exists = check_if_file_exists_in_s3_bucket(goes18_bucket, selected_object_key)
-    else:
-        file_exists = False
-
-    try:
-        if file_exists:
-            copy_to_public_bucket(goes18_bucket, selected_object_key, user_bucket_name, user_object_key)
-            download_link = generate_download_link(user_bucket_name, user_object_key)
-            st.write('Download Link : ', download_link.split("?")[0])
+    else:  
+        if ('s' in filename):
+            selected_object_key = path_from_filename(filename)
+            file_exists = check_if_file_exists_in_s3_bucket(goes18_bucket, selected_object_key)
         else:
-            raise Exception("File Not Found")
-    except Exception as e:
-        st.write("File Not Found")
+            file_exists = False
+
+        try:
+            if file_exists:
+                copy_to_public_bucket(goes18_bucket, selected_object_key, user_bucket_name, user_object_key)
+                download_link = generate_download_link(user_bucket_name, user_object_key)
+                st.write('Download Link : ', download_link.split("?")[0])
+            else:
+                raise Exception("File Not Found")
+        except Exception as e:
+            st.write("File Not Found")

@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 import boto3
 import os
 import botocore
+import re
 
 
 
@@ -13,6 +14,74 @@ st.markdown("<h1 style='text-align: center;'>NEXRAD</h1>", unsafe_allow_html=Tru
 st.header("")
 st.header("Search by Fields")
 st.header("")
+
+
+def read_metadata_nexrad():
+    """Read the metadata from sqlite db"""
+    station=set()
+    year=set()
+    month=set()
+    day=set()
+    db = sqlite3.connect("filenames_nexrad.db")
+    cursor = db.cursor()
+    meta_data=cursor.execute('''SELECT Station, Year , Month, Day FROM filenames_nexrad''')
+    for record in meta_data:
+        station.add(record[0])
+        year.add(record[1])
+        month.add(record[2])
+        day.add(record[3])
+    return station, year, month, day
+
+
+def validate_file_nexrad(filename):
+    """Validate if user provided a valid file name to get URL"""
+    regex = re.compile('[@!#$%^&*()<>?/\|}{~:]')
+    station, year, month, day= read_metadata_nexrad()
+    count=0
+    message=""
+    x=filename.split("_")
+    stat=x[0][:4]
+    y=x[0][4:8]
+    m=x[0][8:10]
+    d=x[0][10:12]
+    hh=x[1][:2]
+    mm=x[1][2:4]
+    ss=x[1][4:6]
+    ext=x[-1][-3:]
+    
+    if(regex.search(filename) != None):
+        count+=1
+        message="Please avoid special character in filename\n"
+    if (len(x[0])!=12):
+        count+=1
+        message+="Please provide station ID, valid date\n"
+    if (stat not in station):
+        count+=1
+        message+="Please provide valid station ID\n"
+    if (y not in year):
+        count+=1
+        message+="Please provide valid year\n"
+    if (m not in month):
+        count+=1
+        message+="Please provide valid month\n"
+    if (len(x[1])!=6):
+        count+=1
+        message="Please provide valid timestamp\n"
+    if (int(hh)>23):
+        count+=1
+        message+="Please provide valid hour\n"
+    if (int(mm)>59):
+        count+=1
+        message+="Please provide valid minutes\n"
+    if (int(ss)>59):
+        count+=1
+        message+="Please provide valid seconds\n"
+    if (ext!='.gz'):
+        count+=1
+        message+="Please provide valid file extension\n"
+    if (count==0):
+        message="Valid file"
+    return (message)
 
 
 def copy_to_public_bucket(src_bucket_name, src_object_key, dest_bucket_name, dest_object_key):
@@ -172,16 +241,20 @@ if st.button('Generate using Name'):
         st.write("Please enter file name")
 
     else: 
-        selected_object_key = path_from_filename(filename)
+        file_integrity = validate_file_nexrad(filename) 
+        if (file_integrity == 'Valid file') :
+            selected_object_key = path_from_filename(filename)
 
-        file_exists = check_if_file_exists_in_s3_bucket(nexrad_bucket, selected_object_key)
+            file_exists = check_if_file_exists_in_s3_bucket(nexrad_bucket, selected_object_key)
 
-        try:
-            if file_exists:
-                copy_to_public_bucket(nexrad_bucket, selected_object_key, user_bucket_name, user_object_key)
-                download_link = generate_download_link(user_bucket_name, user_object_key)
-                st.write('Download Link : ', download_link.split("?")[0])
-            else:
-                raise Exception("File Not Found")
-        except Exception as e:
-            st.write("File Not Found")
+            try:
+                if file_exists:
+                    copy_to_public_bucket(nexrad_bucket, selected_object_key, user_bucket_name, user_object_key)
+                    download_link = generate_download_link(user_bucket_name, user_object_key)
+                    st.write('Download Link : ', download_link.split("?")[0])
+                else:
+                    raise Exception("File Not Found")
+            except Exception as e:
+                st.write("File Not Found")
+        else:
+            st.write(file_integrity)

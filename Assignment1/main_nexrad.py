@@ -67,71 +67,9 @@ def create_metadata_nexrad():
     conn.commit()
     conn.close()
 
-def read_metadata_nexrad():
-    """Read the metadata from sqlite db"""
-    station=set()
-    year=set()
-    month=set()
-    day=set()
-    db = sqlite3.connect("filenames_nexrad.db")
-    cursor = db.cursor()
-    meta_data=cursor.execute('''SELECT Station, Year , Month, Day FROM filenames_nexrad''')
-    for record in meta_data:
-        station.add(record[0])
-        year.add(record[1])
-        month.add(record[2])
-        day.add(record[3])
-    return station, year, month, day
 
-def validate_file_nexrad(filename):
-    """Validate if user provided a valid file name to get URL"""
-    regex = re.compile('[@!#$%^&*()<>?/\|}{~:]')
-    station, year, month, day= read_metadata_nexrad()
-    count=0
-    message=""
-    x=filename.split("_")
-    stat=x[0][:4]
-    y=x[0][4:8]
-    m=x[0][8:10]
-    d=x[0][10:12]
-    hh=x[1][:2]
-    mm=x[1][2:4]
-    ss=x[1][4:6]
-    ext=x[-1][-3:]
-    
-    if(regex.search(filename) != None):
-        count+=1
-        message="Please avoid special character in filename\n"
-    if (len(x[0])!=12):
-        count+=1
-        message+="Please provide station ID, valid date\n"
-    if (stat not in station):
-        count+=1
-        message+="Please provide valid station ID\n"
-    if (y not in year):
-        count+=1
-        message+="Please provide valid year\n"
-    if (m not in month):
-        count+=1
-        message+="Please provide valid month\n"
-    if (len(x[1])!=6):
-        count+=1
-        message="Please provide valid timestamp\n"
-    if (hh>23):
-        count+=1
-        message+="Please provide valid hour\n"
-    if (mm>59):
-        count+=1
-        message+="Please provide valid minutes\n"
-    if (ss>59):
-        count+=1
-        message+="Please provide valid seconds\n"
-    if (ext!='.gz'):
-        count+=1
-        message+="Please provide valid file extension\n"
-    if (count==0):
-        message="Valid file"
-    print (message)
+
+
 
 def list_files_in_user_bucket() :
     """Lists all the files present in the user's S3 bucket along with its file path"""
@@ -157,9 +95,9 @@ def list_files_in_nexrad_bucket():
 
 def main():
     # return
-    list_files_in_user_bucket()
+    # list_files_in_user_bucket()
     # list_files_in_nexrad_bucket()
-    # create_metadata_nexrad()
+    create_metadata_nexrad()
     # write_db_to_bucket()
 
 if __name__ == "__main__":

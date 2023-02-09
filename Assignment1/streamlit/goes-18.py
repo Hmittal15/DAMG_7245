@@ -37,15 +37,9 @@ def generate_download_link(bucket_name, object_key, expiration=3600):
 
 
 def path_from_filename(filename):
-   
-    file_list=[]
-    details_list =[]
-    file_list=filename.split("_")
-    details_list.append(file_list[3][1:5])
-    details_list.append(file_list[3][5:8])
-    details_list.append(file_list[3][8:10])
-    details_list.append(filename)
-    file_path = f"ABI-L1b-RadC/{details_list[0]}/{details_list[1]}/{details_list[2]}/{details_list[3]}"
+
+    ind = filename.index('s')
+    file_path = f"ABI-L1b-RadC/{filename[ind+1: ind+5]}/{filename[ind+5: ind+8]}/{filename[ind+8: ind+10]}/{filename}"
     return file_path
 
 
@@ -156,9 +150,11 @@ st.header("")
 
 if st.button('Generate using Name'):    
 
-    selected_object_key = path_from_filename(filename)
-
-    file_exists = check_if_file_exists_in_s3_bucket(goes18_bucket, selected_object_key)
+    if ('s' in filename):
+        selected_object_key = path_from_filename(filename)
+        file_exists = check_if_file_exists_in_s3_bucket(goes18_bucket, selected_object_key)
+    else:
+        file_exists = False
 
     try:
         if file_exists:

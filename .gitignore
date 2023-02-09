@@ -130,3 +130,5 @@ dmypy.json
 
 # User defined
 /Assignment1/.env
+/Assignment1/streamlit/.env
+*.env

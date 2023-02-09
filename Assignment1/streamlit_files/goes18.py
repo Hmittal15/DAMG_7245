@@ -7,13 +7,32 @@ import boto3
 import os
 import botocore
 import re
-
+import time
 
 
 st.markdown("<h1 style='text-align: center;'>GOES-18</h1>", unsafe_allow_html=True)
 st.header("")
 st.header("Search by Fields")
 st.header("")
+
+
+
+
+#Generating logs with given message in cloudwatch
+def write_logs(message : str):
+    clientlogs.put_log_events(
+    logGroupName = "assignment1-logs",
+    logStreamName = "goes-logs",
+    logEvents = [
+        {
+            'timestamp' : int(time.time() * 1e3),
+            'message' : message
+        }
+    ]                            
+    )
+
+
+
 
 
 def read_metadata_noaa():
@@ -93,6 +112,7 @@ def generate_download_link(bucket_name, object_key, expiration=3600):
         },
         ExpiresIn=expiration
     )
+    write_logs(f"{[object_key.rsplit('/', 1)[-1],response]}")
     return response
 
 
@@ -128,6 +148,12 @@ s3client = boto3.client('s3',
                         aws_secret_access_key = os.environ.get('AWS_SECRET_KEY')
                         )
 
+#Establish connection to logs
+clientlogs = boto3.client('logs', 
+                        region_name = 'us-east-1',
+                        aws_access_key_id = os.environ.get('AWS_ACCESS_KEY'),
+                        aws_secret_access_key = os.environ.get('AWS_SECRET_KEY')
+                        )
 
 conn = sqlite3.connect("filenames_goes.db")
 c = conn.cursor()

@@ -23,3 +23,14 @@ We have used the <code>folium</code> library to facilitate visualization of thes
 * <code>testing_goes.py</code>: This file contains the testing module for file download URL generation logic. We have used <code>pytest</code> module to test if the URLs generated for GOES files are correct or not.<br>
 * <code>testing_nexrad.py</code>: This file contains the testing module for file download URL generation logic. We have used <code>pytest</code> module to test if the URLs generated for NEXRAD files are correct or not.<br>
 * <code>ddl.sql</code>: Contanis the SQL query to create table in SQLite DB for NEXRAD radar locations.
+
+### Codelab documentation for detailed explanation:
+https://docs.google.com/document/d/1w0Szc-RnqDr9uFn8fcpUhQUQXInuCwkk6QaPhrjnpMY/edit?usp=sharing
+
+### Attestation:
+WE ATTEST THAT WE HAVEN’T USED ANY OTHER STUDENTS’ WORK IN OUR ASSIGNMENT AND ABIDE BY THE POLICIES LISTED IN THE STUDENT HANDBOOK
+Contribution:
+* Ananthakrishnan Harikumar: 25%
+* Harshit Mittal: 25%
+* Lakshman Raaj Senthil Nathan: 25%
+* Sruthi Bhaskar: 25%

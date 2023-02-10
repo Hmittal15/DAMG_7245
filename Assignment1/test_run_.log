@@ -1,0 +1,21 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.9.12, pytest-7.1.1, pluggy-1.0.0 -- /opt/anaconda3/bin/python
+cachedir: .pytest_cache
+rootdir: /Users/sruthibhaskar/SRUUUUU/Big Data Systems and Intelligence Analytics/Final_Draft_Assignment1/DAMG_7245/Assignment1
+plugins: anyio-3.5.0
+collecting ... collected 12 items
+
+testing_goes.py::test_01 PASSED                                          [  8%]
+testing_goes.py::test_02 PASSED                                          [ 16%]
+testing_goes.py::test_03 PASSED                                          [ 25%]
+testing_goes.py::test_04 PASSED                                          [ 33%]
+testing_goes.py::test_05 PASSED                                          [ 41%]
+testing_goes.py::test_06 PASSED                                          [ 50%]
+testing_goes.py::test_07 PASSED                                          [ 58%]
+testing_goes.py::test_08 PASSED                                          [ 66%]
+testing_goes.py::test_09 PASSED                                          [ 75%]
+testing_goes.py::test_10 PASSED                                          [ 83%]
+testing_goes.py::test_11 PASSED                                          [ 91%]
+testing_goes.py::test_12 PASSED                                          [100%]
+
+============================== 12 passed in 0.02s ==============================

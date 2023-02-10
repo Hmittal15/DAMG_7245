@@ -44,4 +44,4 @@ def test_11():
     assert file_URL("KLWX19931112_005128.gz")=="https://noaa-nexrad-level2.s3.amazonaws.com/1993/11/12/KLWX/KLWX19931112_005128.gz"
 
 def test_12():
-    assert file_URL("KBOX20030717_014732.gz")==""
+    assert file_URL("KBOX20030717_014732.gz")=="https://noaa-nexrad-level2.s3.amazonaws.com/2003/07/17/KBOX/KBOX20030717_014732.gz"

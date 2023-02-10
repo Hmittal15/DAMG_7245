@@ -210,13 +210,10 @@ selected_file = st.selectbox("Select link for download",
             key=None, help="select link for download")
 
 
-
-
 goes18_bucket = 'noaa-goes18'
 selected_object_key = f'ABI-L1b-RadC/{year}/{day}/{hour}/{selected_file}'
 user_bucket_name = os.environ.get('USER_BUCKET_NAME')
 user_object_key = f'logs/goes18/{selected_file}'
-
 
 st.header("")
 
@@ -224,6 +221,8 @@ if st.button('Generate using Filter'):
     copy_to_public_bucket(goes18_bucket, selected_object_key, user_bucket_name, user_object_key)
     download_link = generate_download_link(user_bucket_name, user_object_key)
     st.write('Download Link : ', download_link.split("?")[0])
+    split_object=selected_object_key.split('/')
+    print("https://noaa-goes18.s3.amazonaws.com/index.html#"+split_object[0]+"/"+split_object[1]+"/"+split_object[2]+"/"+split_object[3]+"/")
 
 
 st.header("")

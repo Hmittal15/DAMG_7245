@@ -21,5 +21,5 @@ We have used the <code>folium</code> library to facilitate visualization of thes
 ### Files
 * <code>mapping.py</code>: We scraped the URL https://en.wikipedia.org/wiki/NEXRAD#Operational_locations for radar sites. Stored the location table in <code>SQLite DB</code> and plotted an interactive map using <code>folium</code> package.<br>
 * <code>testing_goes.py</code>: This file contains the testing module for file download URL generation logic. We have used <code>pytest</code> module to test if the URLs generated for GOES files are correct or not.<br>
-* <code>testing_nexrad.py</code>: This file contains the testing module for file download URL generation logic. We have used <code>pytest</code> module to test if the URLs generated for GOES files are correct or not.<br>
+* <code>testing_nexrad.py</code>: This file contains the testing module for file download URL generation logic. We have used <code>pytest</code> module to test if the URLs generated for NEXRAD files are correct or not.<br>
 * <code>ddl.sql</code>: Contanis the SQL query to create table in SQLite DB for NEXRAD radar locations.

@@ -61,39 +61,35 @@ def validate_file_nexrad(filename):
     hh=x[1][:2]
     mm=x[1][2:4]
     ss=x[1][4:6]
-    ext=x[-1][-3:]
     
     if(regex.search(filename) != None):
         count+=1
-        message+="Please avoid special character in filename! "
-    if (len(x[0])!=12):
+        message="Please avoid special character in filename"
+    elif (len(x[0])!=12):
         count+=1
-        message+="Please provide station ID, valid date! "
-    if (stat not in station):
+        message="Please provide station ID, valid date"
+    elif (stat not in station):
         count+=1
-        message+="Please provide valid station ID! "
-    if (y not in year):
+        message="Please provide valid station ID"
+    elif (y not in year):
         count+=1
-        message+="Please provide valid year! "
-    if (m not in month):
+        message="Please provide valid year"
+    elif (m not in month):
         count+=1
-        message+="Please provide valid month! "
-    if (len(x[1])!=6):
+        message="Please provide valid month"
+    elif (len(x[1])!=6):
         count+=1
-        message="Please provide valid timestamp! "
-    if (int(hh)>23):
+        message="Please provide valid timestamp"
+    elif (int(hh)>23):
         count+=1
-        message+="Please provide valid hour! "
-    if (int(mm)>59):
+        message="Please provide valid hour"
+    elif (int(mm)>59):
         count+=1
-        message+="Please provide valid minutes! "
-    if (int(ss)>59):
+        message="Please provide valid minutes"
+    elif (int(ss)>59):
         count+=1
-        message+="Please provide valid seconds! "
-    if (ext!='.gz'):
-        count+=1
-        message+="Please provide valid file extension! "
-    if (count==0):
+        message="Please provide valid seconds"
+    elif (count==0):
         message="Valid file"
     return (message)
 

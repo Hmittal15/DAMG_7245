@@ -48,11 +48,19 @@ def create_metadata_nexrad():
     paginator = s3client.get_paginator('list_objects_v2')
     for year in folders:
         nexrad_bucket = paginator.paginate(Bucket='noaa-nexrad-level2', Prefix=year)
+
+        # Connect to the database
         conn = sqlite3.connect("filenames_nexrad.db")
         c = conn.cursor()
+
+        # Create a table if it does not exist
         c.execute("""CREATE TABLE IF NOT EXISTS filenames_nexrad (Year text, Month text, Day text, Station text, PKey text primary key)""")
-        # c.execute("""DELETE FROM filenames_nexrad""")
+        
+        # Truncates the table before filling metadata
+        c.execute("""DELETE FROM filenames_nexrad""")
         logging.info("Printing Files in NEXRAD bucket")
+
+        # Fills the data in the database
         for count, page in enumerate (nexrad_bucket):
             files = page.get("Contents")
             if (count%5 == 0):
@@ -62,7 +70,8 @@ def create_metadata_nexrad():
                 filename = file['Key'].split('/')
                 print(filename)
                 pkey = "" + filename[0] + filename[1] + filename[2] + filename[3]
-                c.execute("INSERT OR IGNORE INTO filenames_nexrad (Year , Month , Day , Station , PKey ) VALUES ('{}', '{}', '{}', '{}', '{}')".format(filename[0], filename[1], filename[2], filename[3], pkey))
+                c.execute("INSERT OR IGNORE INTO filenames_nexrad (Year , Month , Day , Station , PKey ) VALUES ('{}', '{}', '{}', '{}', '{}')"
+                          .format(filename[0], filename[1], filename[2], filename[3], pkey))
     
     conn.commit()
     conn.close()

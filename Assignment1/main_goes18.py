@@ -95,11 +95,19 @@ def create_metadata_noaa():
     logging.debug("fetching objects in NOAA s3 bucket")
     paginator = s3client.get_paginator('list_objects_v2')
     noaa_bucket = paginator.paginate(Bucket='noaa-goes18', Prefix="ABI-L1b-RadC")
+
+    # Connect to the database
     conn = sqlite3.connect("filenames_goes.db")
     c = conn.cursor()
+
+    # Create a table if it does not exist
     c.execute("""CREATE TABLE IF NOT EXISTS filenames_goes (Product text, Year text, Day text, Hour text, PKey text primary key)""")
+
+    # Truncates the table before filling metadata
     c.execute("""DELETE FROM filenames_goes""")
     logging.info("Printing Files in NOAA bucket")
+
+    # Fills the data in the database
     for count, page in enumerate (noaa_bucket):
         files = page.get("Contents")
         if (count%5 == 0):
@@ -109,7 +117,8 @@ def create_metadata_noaa():
             filename = file['Key'].split('/')
             print(filename)
             pkey = "" + filename[0] + filename[1] + filename[2] + filename[3] 
-            c.execute("INSERT OR IGNORE INTO filenames_goes (Product , Year , Day , Hour, PKey) VALUES ('{}', '{}', '{}', '{}', '{}')".format(filename[0], filename[1], filename[2], filename[3], pkey))
+            c.execute("INSERT OR IGNORE INTO filenames_goes (Product , Year , Day , Hour, PKey) VALUES ('{}', '{}', '{}', '{}', '{}')"
+                      .format(filename[0], filename[1], filename[2], filename[3], pkey))
     
     conn.commit()
     conn.close()

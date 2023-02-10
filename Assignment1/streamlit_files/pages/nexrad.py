@@ -7,7 +7,7 @@ import boto3
 import os
 import botocore
 import re
-
+import time
 
 
 st.markdown("<h1 style='text-align: center;'>NEXRAD</h1>", unsafe_allow_html=True)

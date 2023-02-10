@@ -9,6 +9,9 @@ from pathlib import Path
 import streamlit as st
 import streamlit_folium as stf
 
+import warnings
+warnings.simplefilter(action='ignore', category=FutureWarning)
+
 st.header(':blue[Operational locations of NEXRAD sites]')
 
 url="https://en.wikipedia.org/wiki/NEXRAD#Operational_locations"
@@ -58,11 +61,11 @@ def create_database():
     db.close()
 
 def check_database_initilization():
-    print(os.path.dirname(__file__))
+    #print(os.path.dirname(__file__))
     if not Path(database_file_path).is_file():
         create_database()
-    else:
-        print("Database file already exist")
+    # else:
+    #     print("Database file already exist")
 
 def write_to_db(final_df):
     db = sqlite3.connect(database_file_path)

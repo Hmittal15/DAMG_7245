@@ -65,34 +65,34 @@ def validate_file_nexrad(filename):
     
     if(regex.search(filename) != None):
         count+=1
-        message="Please avoid special character in filename\n"
+        message+="Please avoid special character in filename! "
     if (len(x[0])!=12):
         count+=1
-        message+="Please provide station ID, valid date\n"
+        message+="Please provide station ID, valid date! "
     if (stat not in station):
         count+=1
-        message+="Please provide valid station ID\n"
+        message+="Please provide valid station ID! "
     if (y not in year):
         count+=1
-        message+="Please provide valid year\n"
+        message+="Please provide valid year! "
     if (m not in month):
         count+=1
-        message+="Please provide valid month\n"
+        message+="Please provide valid month! "
     if (len(x[1])!=6):
         count+=1
-        message="Please provide valid timestamp\n"
+        message="Please provide valid timestamp! "
     if (int(hh)>23):
         count+=1
-        message+="Please provide valid hour\n"
+        message+="Please provide valid hour! "
     if (int(mm)>59):
         count+=1
-        message+="Please provide valid minutes\n"
+        message+="Please provide valid minutes! "
     if (int(ss)>59):
         count+=1
-        message+="Please provide valid seconds\n"
+        message+="Please provide valid seconds! "
     if (ext!='.gz'):
         count+=1
-        message+="Please provide valid file extension\n"
+        message+="Please provide valid file extension! "
     if (count==0):
         message="Valid file"
     return (message)
@@ -263,21 +263,24 @@ if st.button('Generate using Name'):
     if (filename == ""): 
         st.write("Please enter file name")
 
-    else: 
-        file_integrity = validate_file_nexrad(filename) 
-        if (file_integrity == 'Valid file') :
-            selected_object_key = path_from_filename(filename)
+    else:
+        try:
+            file_integrity = validate_file_nexrad(filename) 
+            if (file_integrity == 'Valid file') :
+                selected_object_key = path_from_filename(filename)
 
-            file_exists = check_if_file_exists_in_s3_bucket(nexrad_bucket, selected_object_key)
+                file_exists = check_if_file_exists_in_s3_bucket(nexrad_bucket, selected_object_key)
 
-            try:
-                if file_exists:
-                    copy_to_public_bucket(nexrad_bucket, selected_object_key, user_bucket_name, user_object_key)
-                    download_link = generate_download_link(user_bucket_name, user_object_key)
-                    st.write('Download Link : ', download_link.split("?")[0])
-                else:
-                    raise Exception("File Not Found")
-            except Exception as e:
-                st.write("File Not Found")
-        else:
-            st.write(file_integrity)
+                try:
+                    if file_exists:
+                        copy_to_public_bucket(nexrad_bucket, selected_object_key, user_bucket_name, user_object_key)
+                        download_link = generate_download_link(user_bucket_name, user_object_key)
+                        st.write('Download Link : ', download_link.split("?")[0])
+                    else:
+                        raise Exception("File Not Found")
+                except Exception as e:
+                    st.write("File Not Found")
+            else:
+                st.write(file_integrity)
+        except Exception as ee:
+            st.write("Invalid filename")

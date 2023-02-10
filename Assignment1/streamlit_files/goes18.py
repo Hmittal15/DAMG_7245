@@ -68,28 +68,28 @@ def validate_file(filename):
     
     if(regex.search(filename) != None):
         count+=1
-        message="Please avoid special character in filename"
+        message+="Please avoid special character in filename! "
     if (x[0]!='OR'):
         count+=1
-        message="Please provide valid prefix for Operational system real-time data"
+        message+="Please provide valid prefix for Operational system real-time data! "
     if (prod_name not in prod):
         count+=1
-        message="Please provide valid product name"
+        message+="Please provide valid product name! "
     if ((goes!='G16') and (goes!='G18')):
         count+=1
-        message="Please provide valid satellite ID"
+        message+="Please provide valid satellite ID! "
     if ((start[0]!='s') or (len(start)!=15) or (start[1:5] not in year) or (start[5:8] not in day) or (start[8:10] not in hour)):
         count+=1
-        message="Please provide valid start date"
+        message+="Please provide valid start date! "
     if ((end[0]!='e') or (len(end)!=15)):
         count+=1
-        message="Please provide valid end date"
+        message+="Please provide valid end date! "
     if ((create[0][0]!='c') or (len(create[0])!=15)):
         count+=1
-        message="Please provide valid create date"
+        message+="Please provide valid create date! "
     if (x[-1][-3:]!='.nc'):
         count+=1
-        message="Please provide valid file extension"
+        message+="Please provide valid file extension! "
     if (count==0):
         message="Valid file"
     return (message)
@@ -239,24 +239,28 @@ if st.button('Generate using Name'):
     if (filename == ""): 
         st.write("Please enter file name")
 
-    else: 
-        file_integrity = validate_file(filename) 
-        if (file_integrity == 'Valid file') :
-            if ('s' in filename):
-                selected_object_key = path_from_filename(filename)
-                file_exists = check_if_file_exists_in_s3_bucket(goes18_bucket, selected_object_key)
-            else:
-                file_exists = False
-
-            try:
-                if file_exists:
-                    copy_to_public_bucket(goes18_bucket, selected_object_key, user_bucket_name, user_object_key)
-                    download_link = generate_download_link(user_bucket_name, user_object_key)
-                    st.write('Download Link : ', download_link.split("?")[0])
+    else:
+        try:
+            file_integrity = validate_file(filename) 
+            if (file_integrity == 'Valid file') :
+                if ('s' in filename):
+                    selected_object_key = path_from_filename(filename)
+                    file_exists = check_if_file_exists_in_s3_bucket(goes18_bucket, selected_object_key)
                 else:
-                    raise Exception("File Not Found")
-            except Exception as e:
-                st.write("File Not Found")
-        else:
-            st.write(file_integrity)
+                    file_exists = False
+
+                try:
+                    if file_exists:
+                        copy_to_public_bucket(goes18_bucket, selected_object_key, user_bucket_name, user_object_key)
+                        download_link = generate_download_link(user_bucket_name, user_object_key)
+                        st.write('Download Link : ', download_link.split("?")[0])
+                    else:
+                        raise Exception("File Not Found")
+                except Exception as e:
+                    st.write("File Not Found")
+            else:
+                st.write(file_integrity)
+        except Exception as ee:
+            st.write("Invalid filename")
+
             

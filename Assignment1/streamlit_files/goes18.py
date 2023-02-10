@@ -222,6 +222,7 @@ if st.button('Generate using Filter'):
     download_link = generate_download_link(user_bucket_name, user_object_key)
     st.write('Download Link : ', download_link.split("?")[0])
     split_object=selected_object_key.split('/')
+    st.write("NOAA bucket path for verfication")
     st.write("https://noaa-goes18.s3.amazonaws.com/index.html#"+split_object[0]+"/"+split_object[1]+"/"+split_object[2]+"/"+split_object[3]+"/")
 
 

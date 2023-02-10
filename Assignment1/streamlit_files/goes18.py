@@ -34,7 +34,7 @@ def write_logs(message : str):
 
 
 
-
+#Reading metadata from SQLite DB and storing in sets
 def read_metadata_noaa():
     """Read the metadata from sqlite db"""
     prod=set()
@@ -51,7 +51,7 @@ def read_metadata_noaa():
         hour.add(record[3])
     return prod, year, day, hour
 
-
+#Performing filename validations on multiple conditions
 def validate_file(filename):
     """Validate if user provided a valid file name to get URL"""
     regex = re.compile('[@!#$%^&*()<>?/\|}{~:]')

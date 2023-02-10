@@ -27,6 +27,9 @@ We have used the <code>folium</code> library to facilitate visualization of thes
 ### Codelab documentation for detailed explanation:
 https://docs.google.com/document/d/1w0Szc-RnqDr9uFn8fcpUhQUQXInuCwkk6QaPhrjnpMY/edit?usp=sharing
 
+### Streamlit UI Cloud URL for app:
+https://bigdataia-spring2023-t-assignment1streamlit-filesgoes18-d3db6h.streamlit.app/
+
 ### Attestation:
 WE ATTEST THAT WE HAVEN’T USED ANY OTHER STUDENTS’ WORK IN OUR ASSIGNMENT AND ABIDE BY THE POLICIES LISTED IN THE STUDENT HANDBOOK
 Contribution:

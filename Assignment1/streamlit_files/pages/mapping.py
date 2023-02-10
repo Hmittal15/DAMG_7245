@@ -7,8 +7,11 @@ import os
 import sqlite3
 from pathlib import Path
 import streamlit as st
+
+# To facilitate folium support with streamlit package
 import streamlit_folium as stf
 
+#To suppress future warnings in python pandas package
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
@@ -33,6 +36,7 @@ for row in tables[table_index].tbody.find_all("tr"):
         coordinates = col[3].text
         data = data.append({"State":state, "City":city, "Identifier":identifier, "Coordinates":coordinates}, ignore_index=True)
 
+#Performing computations to extract latitude and longitude values from 'Coordinates' column
 def transformCol(x):
     return x.split("/")[2].split("\ufeff")[0].replace(";",",").lstrip()
 
@@ -74,6 +78,7 @@ def write_to_db(final_df):
     db.close()
     del final_df
 
+#Reading the respective location features from DB and creating circle markers, pop-up markers for each
 def read_from_db():
     latitudes=[]
     longitudes=[]
@@ -82,7 +87,6 @@ def read_from_db():
     cursor = db.cursor()
     sat_data=cursor.execute('''SELECT lat, long, City FROM loaction_radar''')
     satellite = folium.map.FeatureGroup()
-    # loop through the 100 crimes and add each to the incidents feature group
     for record in sat_data:
         satellite.add_child(
                 folium.features.CircleMarker(
@@ -97,17 +101,15 @@ def read_from_db():
         latitudes.append(record[0])
         longitudes.append(record[1])
         labels.append(record[2])
-
-
-    # add satellite to map
-    # create map and display it
+    
+    # create map with a default starting location
     satellite_map = folium.Map(location=[37.6, -95.665], zoom_start=3)
 
     # add pop-up text to each marker on the map
     for lat, lng, label in zip(latitudes, longitudes, labels):
         folium.Marker([lat, lng], popup=label).add_to(satellite_map)    
 
-    # display the map of San Francisco
+    # add satellite to map and display it using streamlit-folium package
     satellite_map.add_child(satellite)
     stf.st_folium(satellite_map, width=700, height=460)
     st.text("Click on marker to view city name!")

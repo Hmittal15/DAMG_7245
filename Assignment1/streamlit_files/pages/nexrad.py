@@ -30,6 +30,7 @@ def write_logs(message : str):
     ]                            
     )
 
+#Reading metadata from SQLite DB and storing in sets
 def read_metadata_nexrad():
     """Read the metadata from sqlite db"""
     station=set()
@@ -46,7 +47,7 @@ def read_metadata_nexrad():
         day.add(record[3])
     return station, year, month, day
 
-
+#Performing filename validations on multiple conditions
 def validate_file_nexrad(filename):
     """Validate if user provided a valid file name to get URL"""
     regex = re.compile('[@!#$%^&*()<>?/\|}{~:]')
